@@ -29,5 +29,5 @@ jobs:
           org.opencontainers.image.description="Your image description"
           org.opencontainers.image.url=https://github.com/${{ github.repository }}
           org.opencontainers.image.source=https://github.com/${{ github.repository }}
-          # org.opencontainers.image.documentation=https://github.com/${{ github.repository }}/blob/main/README.md
+          #org.opencontainers.image.documentation=https://github.com/${{ github.repository }}/blob/main/README.md
           org.opencontainers.image.version=${{ github.sha }}
