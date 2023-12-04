@@ -1,3 +1,15 @@
+version: '3'
+services:
+  log-tailer:
+    image: ghcr.io/djryan012/tailer-to-mqtt:latest
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: log_tailer_container
+    volumes:
+      - ./config.yaml:/app/config.yaml
+      - /home/user/TailerMqtt/config.yml:/usr/local/bin/config.yml:ro
+
   mqtt_broker:
     image: eclipse-mosquitto
     container_name: mqtt_broker
