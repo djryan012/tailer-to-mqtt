@@ -23,7 +23,7 @@ jobs:
         file: ./path/to/Dockerfile
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}:latest
+        tags: ghcr.io/${{ djryn012 }}/${{ tailer-to-mqtt }}:latest
         labels: |
           org.opencontainers.image.title=${{ github.repository_name }}
           org.opencontainers.image.description="Your image description"
