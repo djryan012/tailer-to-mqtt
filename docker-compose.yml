@@ -4,7 +4,7 @@ services:
     image: ghcr.io/djryan012/tailer-to-mqtt:latest
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: Dockerfile
     container_name: log_tailer_container
     volumes:
       - /home/user/TailerMqtt/config.yml:/app/config.yaml
