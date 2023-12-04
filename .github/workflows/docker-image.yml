@@ -20,7 +20,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: ./path/to/Dockerfile
+        file: ./docker/Dockerfile
         platforms: linux/amd64,linux/arm64
         push: true
         tags: ghcr.io/djryn012/tailer-to-mqtt:latest
