@@ -6,6 +6,7 @@ RUN apk add --no-cache \
     mosquitto-clients \
     jq \
     bash
+    yq
 
 # Install yaml2env
 RUN wget https://github.com/kvz/json2env/releases/download/v1.2/yaml2env -O /usr/local/bin/yaml2env && \
