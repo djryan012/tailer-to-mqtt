@@ -33,4 +33,4 @@ jobs:
           org.opencontainers.image.version=${{ github.sha }}
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.GH_PAT }}
+        password: ${{ secrets.GITHUB_TOKEN }}
