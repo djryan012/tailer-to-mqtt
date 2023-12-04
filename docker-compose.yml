@@ -5,9 +5,9 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-
+    container_name: log_tailer_container
     volumes:
-      - ./config.yaml:/app/config.yaml
+      - /home/user/TailerMqtt/config.yml:/app/config.yaml
       - /var/run/docker.sock:/var/run/docker.sock
 
   mqtt-publisher:
@@ -20,6 +20,3 @@ services:
       - MQTT_PASSWORD=${MQTT_PASSWORD}
     volumes:
       - ./config.yaml:/app/config.yaml
-
-volumes:
-  mosquitto-data:
