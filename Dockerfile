@@ -16,8 +16,10 @@ RUN wget https://github.com/mikefarah/yq/releases/download/v4.9.3/yq_linux_amd64
 RUN wget https://github.com/kvz/json2env/releases/download/v1.2/yaml2env -O /usr/local/bin/yaml2env && \
     chmod +x /usr/local/bin/yaml2env
 
+WORKDIR /app
+
 COPY tail_logs.sh /usr/local/bin/tail_logs.sh
-COPY config.yml /usr/local/bin/config.yml
+COPY config.yml /app/config.yml   # Move the config file directly into the /app directory
 
 RUN chmod +x /usr/local/bin/tail_logs.sh
 
