@@ -1,0 +1,8 @@
+  mqtt_broker:
+    image: eclipse-mosquitto
+    container_name: mqtt_broker
+    ports:
+      - "1883:1883"
+    environment:
+      - MQTT_USERNAME=your_mqtt_username
+      - MQTT_PASSWORD=your_mqtt_password
