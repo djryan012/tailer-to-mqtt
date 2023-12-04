@@ -7,14 +7,16 @@ services:
       dockerfile: docker/Dockerfile
     container_name: log_tailer_container
     volumes:
-      - ./config.yaml:/app/config.yaml
-      - /home/user/TailerMqtt/config.yml:/usr/local/bin/config.yml:ro
+      - /home/user/TailerMqtt/config.yml:/app/config.yaml
+      - /var/run/docker.sock:/var/run/docker.sock
 
-  mqtt_broker:
+  mqtt-publisher:
     image: eclipse-mosquitto
-    container_name: mqtt_broker
-    ports:
-      - "1883:1883"
+    depends_on:
+      - log-tailer
     environment:
-      - MQTT_USERNAME=your_mqtt_username
-      - MQTT_PASSWORD=your_mqtt_password
+      - MQTT_BROKER_HOST=mosquitto
+      - MQTT_USERNAME=${MQTT_USERNAME}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
+    volumes:
+      - ./config.yaml:/app/config.yaml
