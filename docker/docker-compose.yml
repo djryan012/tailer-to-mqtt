@@ -1,7 +1,7 @@
 version: '3'
 services:
   log-tailer:
-    image: ghcr.io/djrryan012/tailer-to-mqtt:latest
+    image: ghcr.io/djryan012/tailer-to-mqtt:latest
     build:
       context: .
       dockerfile: docker/Dockerfile
