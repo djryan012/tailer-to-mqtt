@@ -1,0 +1,25 @@
+version: '3'
+services:
+  log-tailer:
+    image: ghcr.io/djrryan012/tailer-to-mqtt:latest
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+
+    volumes:
+      - ./config.yaml:/app/config.yaml
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  mqtt-publisher:
+    image: eclipse-mosquitto
+    depends_on:
+      - log-tailer
+    environment:
+      - MQTT_BROKER_HOST=mosquitto
+      - MQTT_USERNAME=${MQTT_USERNAME}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
+    volumes:
+      - ./config.yaml:/app/config.yaml
+
+volumes:
+  mosquitto-data:
