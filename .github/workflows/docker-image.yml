@@ -32,5 +32,5 @@ jobs:
         #   org.opencontainers.image.documentation=https://github.com/${{ github.repository }}/blob/main/README.md
         #   org.opencontainers.image.version=${{ github.sha }}
         registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.CR_PAT }}
+        username: djryan012
+        password: ${{ secrets.GH_PAT }}
