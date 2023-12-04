@@ -19,7 +19,7 @@ RUN wget https://github.com/kvz/json2env/releases/download/v1.2/yaml2env -O /usr
 WORKDIR /app
 
 COPY tail_logs.sh /usr/local/bin/tail_logs.sh
-COPY ../config.yml /app/config.yml   # Update the path to config.yml
+COPY config.yml /app/config.yml   # Keep the config file in /app
 
 RUN chmod +x /usr/local/bin/tail_logs.sh
 
