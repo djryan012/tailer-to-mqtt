@@ -1,5 +1,5 @@
-keywords: "error|exception"
-container_name: "your_container_name"
+target_container: "your_target_container_name"
+mqtt_broker: "mqtt://mqtt_broker_address:1883"
 mqtt_topic: "logs"
 mqtt_username: "your_mqtt_username"
 mqtt_password: "your_mqtt_password"
