@@ -31,3 +31,6 @@ jobs:
         #   org.opencontainers.image.source=https://github.com/${{ github.repository }}
         #   org.opencontainers.image.documentation=https://github.com/${{ github.repository }}/blob/main/README.md
         #   org.opencontainers.image.version=${{ github.sha }}
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.CR_PAT }}
