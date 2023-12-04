@@ -1,5 +1,6 @@
 # Stage 1: Build Stage
 FROM alpine:latest AS builder
+LABEL org.opencontainers.image.source="https://github.com/djryan012/tailer-to-mqtt"
 
 RUN apk --no-cache add bash grep yq
 
