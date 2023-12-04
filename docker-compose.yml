@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: log_tailer_container
     volumes:
-      - /home/user/TailerMqtt/config.yml:/app/config.yaml
+      - ./config.yml:/app/config.yml
       - /var/run/docker.sock:/var/run/docker.sock
 
   mqtt-publisher:
