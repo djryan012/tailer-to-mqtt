@@ -5,8 +5,12 @@ FROM alpine:latest
 RUN apk add --no-cache \
     mosquitto-clients \
     jq \
-    bash
-    yq
+    bash \
+    wget
+
+# Install yq
+RUN wget https://github.com/mikefarah/yq/releases/download/v4.9.3/yq_linux_amd64 -O /usr/local/bin/yq && \
+    chmod +x /usr/local/bin/yq
 
 # Install yaml2env
 RUN wget https://github.com/kvz/json2env/releases/download/v1.2/yaml2env -O /usr/local/bin/yaml2env && \
