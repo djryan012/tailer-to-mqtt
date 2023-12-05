@@ -1,21 +1,28 @@
-#!/bin/bash
+#!/bin/sh
 
-# Use jq to parse YAML file
-target_container=$(yq eval '.target_container' /app/config.yaml)
-mqtt_broker=$(yq eval '.mqtt_broker' /app/config.yaml)
-mqtt_topic=$(yq eval '.mqtt_topic' /app/config.yaml)
+# Load configuration variables
+keywords=$(yq eval '.keywords' /app/config.yaml)
+container_name=$(yq eval '.container_name' /app/config.yaml)
+topic=$(yq eval '.mqtt_topic' /app/config.yaml)
 mqtt_username=$(yq eval '.mqtt_username' /app/config.yaml)
 mqtt_password=$(yq eval '.mqtt_password' /app/config.yaml)
 
-# Extract keywords from the config file
-keywords=($(yq eval '.keywords[]' "$config_file"))
+# Display loaded configuration
+echo "Log Tailing Container Configuration:"
+echo "-------------------------------------"
+echo "Keywords: $keywords"
+echo "Container Name: $container_name"
+echo "MQTT Topic: $topic"
+echo "MQTT Username: $mqtt_username"
+echo "MQTT Password: ********"
 
-# Tail logs, filter specific lines, and publish to MQTT
-docker logs -f "$target_container" | while read -r line; do
-  for keyword in "${keywords[@]}"; do
-    if echo "$line" | grep -q "$keyword"; then
-      mosquitto_pub -h "$mqtt_broker" -t "$mqtt_topic" -u "$mqtt_username" -P "$mqtt_password" -m "$line"
-      break
-    fi
-  done
+# Log start of the container
+echo "Log Tailing Container started at $(date)"
+
+# Tail logs and publish to MQTT
+while true; do
+    docker logs --tail 0 -f "$container_name" | grep --line-buffered "$keywords" | while read -r line; do
+        echo "Found keyword in log: $line"
+        mosquitto_pub -h mqtt-publisher -t "$topic" -u "$mqtt_username" -P "$mqtt_password" -m "$line"
+    done
 done
