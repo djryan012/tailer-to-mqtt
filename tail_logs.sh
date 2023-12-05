@@ -21,7 +21,7 @@ echo "Log Tailing Container started at $(date)"
 
 # Tail logs and publish to MQTT
 while true; do
-    docker logs --tail 0 -f "$container_name" | grep --line-buffered "$keywords" | while read -r line; do
+    docker logs --tail 0 -f "$container_name" | grep -u "$keywords" | while read -r line; do
         echo "Found keyword in log: $line"
         mosquitto_pub -h mqtt-publisher -t "$topic" -u "$mqtt_username" -P "$mqtt_password" -m "$line"
     done
