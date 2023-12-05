@@ -2,7 +2,7 @@
 
 FROM alpine:latest
 
-RUN apk add --no-cache \
+RUN apk add --no-cache docker \
     mosquitto-clients \
     jq \
     bash \
