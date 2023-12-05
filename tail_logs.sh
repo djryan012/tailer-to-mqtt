@@ -1,11 +1,11 @@
 #!/bin/sh
 
 # Load configuration variables
-keywords=$(yq eval '.keywords' /app/config.yaml)
-container_name=$(yq eval '.container_name' /app/config.yaml)
-topic=$(yq eval '.mqtt_topic' /app/config.yaml)
-mqtt_username=$(yq eval '.mqtt_username' /app/config.yaml)
-mqtt_password=$(yq eval '.mqtt_password' /app/config.yaml)
+keywords=$(yq eval '.keywords' /app/config.yml)
+container_name=$(yq eval '.container_name' /app/config.yml)
+topic=$(yq eval '.mqtt_topic' /app/config.yml)
+mqtt_username=$(yq eval '.mqtt_username' /app/config.yml)
+mqtt_password=$(yq eval '.mqtt_password' /app/config.yml)
 
 # Display loaded configuration
 echo "Log Tailing Container Configuration:"
