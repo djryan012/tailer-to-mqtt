@@ -13,8 +13,8 @@ RUN wget https://github.com/mikefarah/yq/releases/download/v4.9.3/yq_linux_amd64
     chmod +x /usr/local/bin/yq
 
 # Install yaml2env
-RUN wget https://github.com/kvz/json2env/releases/download/v1.2/yaml2env -O /usr/local/bin/yaml2env && \
-    chmod +x /usr/local/bin/yaml2env
+# RUN wget https://github.com/kvz/json2env/releases/download/v1.2/yaml2env -O /usr/local/bin/yaml2env && \
+#     chmod +x /usr/local/bin/yaml2env
 
 WORKDIR /app
 
