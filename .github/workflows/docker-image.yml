@@ -7,11 +7,9 @@ on:
     branches: [ "python" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
+    steps:
     - name: 'Login to GitHub Container Registry'
       uses: docker/login-action@v3
       with:
