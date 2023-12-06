@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -18,19 +19,10 @@ jobs:
       - name: Build Docker Image
         run: |
           docker buildx create --use
-          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/djryan012/tailer-to-mqtt:latest
+          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/djryan012/tailer-to-mqtt:latest .
+
         env:
           DOCKER_CLI_EXPERIMENTAL: enabled
 
-      - name: 'Login to GitHub Container Registry'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{github.actor}}
-          password: ${{secrets.GITHUB_TOKEN}}
       - name: Login to GitHub Container Registry
-        run: docker login ghcr.io -u ${{ github.repository_owner }} -p ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Push Docker Image
-        run: docker push ghcr.io/djryan012/tailer-to-mqtt:latest
-
+        run: echo "${{secrets.GITHUB_TOKEN}}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
