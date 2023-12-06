@@ -2,7 +2,7 @@ name: Deploy Images to GHCR
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "python" ]
 
 jobs:
   build:
