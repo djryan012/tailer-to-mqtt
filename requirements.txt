@@ -1,2 +1,3 @@
 docker
 paho-mqtt
+python-dotenv

@@ -1,21 +1,25 @@
 import os
+from dotenv import load_dotenv
 import time
 import docker
 import paho.mqtt.client as mqtt
 import logging
 
+# Load environmental variables from file
+load_dotenv()
+
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Display environmental variables in log
-logger.info("MQTT_BROKER_HOST: %s", os.environ.get("MQTT_BROKER_HOST", "mqtt-broker-host"))
-logger.info("MQTT_BROKER_PORT: %s", os.environ.get("MQTT_BROKER_PORT", 1883))
-logger.info("MQTT_TOPIC: %s", os.environ.get("MQTT_TOPIC", "logs"))
-logger.info("CONTAINER_ID_TO_READ: %s", os.environ.get("CONTAINER_ID_TO_READ", "your_container_id"))
-logger.info("KEYWORDS: %s", os.environ.get("KEYWORDS", "error").split(","))
-logger.info("MQTT_USERNAME: %s", os.environ.get("MQTT_USERNAME", ""))
-logger.info("MQTT_PASSWORD: %s", os.environ.get("MQTT_PASSWORD", ""))
+# Retrieve environmental variables
+MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "mqtt-broker-host")
+MQTT_BROKER_PORT = int(os.getenv("MQTT_BROKER_PORT", 1883))
+MQTT_TOPIC = os.getenv("MQTT_TOPIC", "logs")
+CONTAINER_ID_TO_READ = os.getenv("CONTAINER_ID_TO_READ", "your_container_id")
+KEYWORDS = os.getenv("KEYWORDS", "error").split(",")
+MQTT_USERNAME = os.getenv("MQTT_USERNAME", "")
+MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "")
 
 def read_container_logs(container_id, mqtt_client):
     client = docker.from_env()
