@@ -28,5 +28,5 @@ jobs:
         file: ./Dockerfile
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: ghcr.io/djryan012/tailer-to-mqtt:latest
+        tags: ghcr.io/djryan012/tailer-to-mqtt:d
         
