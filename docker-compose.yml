@@ -2,10 +2,14 @@ version: '3'
 
 services:
   log_reader:
-    image: ghcr.io/djryan012/tailer-to-mqtt:latest
+    image: ghcr.io/djryan012/tailer-to-mqtt:dev
     container_name: tailing-to-mqtt
     build:
       context: .
       dockerfile: Dockerfile
     environment:
       - stack.env
+    stdin_open: true
+    tty: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
