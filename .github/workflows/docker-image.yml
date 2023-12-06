@@ -19,7 +19,7 @@ jobs:
       - name: Build Docker Image
         run: |
           docker buildx create --use
-          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/djryan012/tailer-to-mqtt:latest .
+          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/djryan012/tailer-to-mqtt:dev .
 
         env:
           DOCKER_CLI_EXPERIMENTAL: enabled
