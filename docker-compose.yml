@@ -3,6 +3,7 @@ version: '3'
 services:
   log_reader:
     image: ghcr.io/djryan012/tailer-to-mqtt:latest
+    container_name: tailing-to-mqtt
     build:
       context: .
       dockerfile: Dockerfile
