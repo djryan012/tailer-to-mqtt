@@ -9,6 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+<<<<<<< HEAD
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -34,3 +35,13 @@ jobs:
 
       - name: Push Docker Image
         run: docker push ghcr.io/djryan012/tailer-to-mqtt:latest
+=======
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        file: ./Dockerfile
+        platforms: ubuntu-latest
+        push: true
+        tags: ghcr.io/djryan012/tailer-to-mqtt:latest
+>>>>>>> b7bb8ec9d1fc0d20905a087214878b7f33a08787
