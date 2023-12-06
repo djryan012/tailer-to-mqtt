@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 # Retrieve environmental variables
 MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "mqtt-broker-host")
-MQTT_BROKER_PORT = int(os.getenv("MQTT_BROKER_PORT", 1883))
+MQTT_BROKER_PORT = int(os.getenv("MQTT_BROKER_PORT", "mqtt-broker-port")))
 MQTT_TOPIC = os.getenv("MQTT_TOPIC", "logs")
 CONTAINER_ID_TO_READ = os.getenv("CONTAINER_ID_TO_READ", "your_container_id")
 KEYWORDS = os.getenv("KEYWORDS", "error").split(",")
