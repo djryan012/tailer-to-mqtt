@@ -1,22 +1,10 @@
 version: '3'
+
 services:
-  log-tailer:
+  log_reader:
     image: ghcr.io/djryan012/tailer-to-mqtt:latest
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: log_tailer_container
-    volumes:
-      - ./config.yml:/app/config.yml
-      - /var/run/docker.sock:/var/run/docker.sock
-
-  mqtt-publisher:
-    image: eclipse-mosquitto
-    depends_on:
-      - log-tailer
     environment:
-      - MQTT_BROKER_HOST=${MQTT_BROKER}
-      - MQTT_USERNAME=${MQTT_USERNAME}
-      - MQTT_PASSWORD=${MQTT_PASSWORD}
-    volumes:
-      - ./config.yml:/app/config.yml
+      - stack.env

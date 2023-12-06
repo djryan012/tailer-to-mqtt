@@ -1,27 +1,14 @@
-# Dockerfile for Log Tailing Container
+# Use an official Python runtime as a parent image
+FROM python:3.8-slim
 
-FROM alpine:latest
-
-RUN apk add --no-cache docker \
-    mosquitto-clients \
-    jq \
-    bash \
-    wget
-
-# Install yq
-RUN wget https://github.com/mikefarah/yq/releases/download/v4.9.3/yq_linux_amd64 -O /usr/local/bin/yq && \
-    chmod +x /usr/local/bin/yq
-
-# Install yaml2env
-# RUN wget https://github.com/kvz/json2env/releases/download/v1.2/yaml2env -O /usr/local/bin/yaml2env && \
-#     chmod +x /usr/local/bin/yaml2env
-
+# Set the working directory in the container
 WORKDIR /app
 
-COPY tail_logs.sh /usr/local/bin/tail_logs.sh
-# COPY config.yml /app/config.yml   # Keep the config file in /app
-COPY config.yml /app/
+# Copy the current directory contents into the container
+COPY . /app
 
-RUN chmod +x /usr/local/bin/tail_logs.sh
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["/usr/local/bin/tail_logs.sh"]
+# Run log_reader.py when the container launches
+CMD ["python", "./log_reader.py"]
