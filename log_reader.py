@@ -12,14 +12,30 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Retrieve environmental variables
+# Retrieve and print environmental variables
 MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "mqtt-broker-host")
-MQTT_BROKER_PORT = int(os.getenv("MQTT_BROKER_PORT", "mqtt-broker-port"))
+MQTT_BROKER_PORT = os.getenv("MQTT_BROKER_PORT", "mqtt-broker-port")
 MQTT_TOPIC = os.getenv("MQTT_TOPIC", "logs")
 CONTAINER_ID_TO_READ = os.getenv("CONTAINER_ID_TO_READ", "your_container_id")
 KEYWORDS = os.getenv("KEYWORDS", "error").split(",")
 MQTT_USERNAME = os.getenv("MQTT_USERNAME", "")
 MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "")
+
+# Print variables for debugging
+print(f"MQTT_BROKER_HOST: {MQTT_BROKER_HOST}")
+print(f"MQTT_BROKER_PORT: {MQTT_BROKER_PORT}")
+print(f"MQTT_TOPIC: {MQTT_TOPIC}")
+print(f"CONTAINER_ID_TO_READ: {CONTAINER_ID_TO_READ}")
+print(f"KEYWORDS: {KEYWORDS}")
+print(f"MQTT_USERNAME: {MQTT_USERNAME}")
+print(f"MQTT_PASSWORD: {MQTT_PASSWORD}")
+
+# Convert MQTT_BROKER_PORT to an integer
+try:
+    MQTT_BROKER_PORT = int(MQTT_BROKER_PORT)
+except ValueError:
+    logger.error("Invalid value for MQTT_BROKER_PORT. Please provide a valid integer.")
+    exit(1)
 
 def read_container_logs(container_id, mqtt_client):
     client = docker.from_env()
