@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import time
 import docker
 import logging
+import paho.mqtt.client as mqtt
 
 # Load environmental variables from file
 load_dotenv()
@@ -18,10 +19,20 @@ print(f"CONTAINER_NAME_TO_READ: {CONTAINER_NAME_TO_READ}")
 if CONTAINER_NAME_TO_READ is None:
     raise ValueError("CONTAINER_NAME_TO_READ environment variable not set. Please provide the container name.")
 
+# MQTT configuration
+MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "mqtt-broker-host")
+MQTT_BROKER_PORT = os.getenv("MQTT_BROKER_PORT", "mqtt-broker-port")
+MQTT_TOPIC = os.getenv("MQTT_TOPIC", "logs")
+MQTT_USERNAME = os.getenv("MQTT_USERNAME", "")
+MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "")
+
+# Variable to store the last processed log line
+last_processed_log_line = ""
+
 def read_container_logs(container_name):
     client = docker.from_env()
-    max_retries = 5  # Maximum number of retries
-    retries = 0
+    mqtt_client = mqtt.Client()
+    mqtt_client.username_pw_set(MQTT_USERNAME, password=MQTT_PASSWORD)
 
     try:
         while True:
@@ -29,29 +40,32 @@ def read_container_logs(container_name):
                 container = client.containers.get(container_name)
                 logs = container.logs(stream=True, follow=True)
 
-                last_log_line = ""  # Store the last encountered log line
-                accumulated_log = b""  # Initialize accumulated_log
-
                 for byte_char in logs:
                     char = byte_char.decode('utf-8')
 
                     if char == '\n':
-                        # End of a log line, update last_log_line
-                        last_log_line = accumulated_log.decode('utf-8').strip()
+                        # End of a log line, check if it's a new log line
+                        current_log_line = accumulated_log.decode('utf-8').strip()
                         accumulated_log = b""
+
+                        if current_log_line != last_processed_log_line:
+                            # Print the new log line
+                            print(f"Last Log Line: {current_log_line}")
+
+                            # Uncomment the following lines to publish to MQTT
+                            # mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
+                            # mqtt_client.publish(MQTT_TOPIC, current_log_line)
+                            # mqtt_client.disconnect()
+
+                            # Update the last processed log line
+                            last_processed_log_line = current_log_line
+
                     else:
                         # Accumulate bytes to form a complete log line
                         accumulated_log += byte_char
 
-                    # Print the last log line
-                    if last_log_line:
-                        print(f"Last Log Line: {last_log_line}")
-
-                retries = 0  # Reset retry count on successful log retrieval
-
             except Exception as e:
-                retries += 1
-                logger.warning(f"An error occurred: {str(e)}. Retrying... (Retry {retries}/{max_retries})")
+                logger.warning(f"An error occurred: {str(e)}. Retrying...")
                 time.sleep(5)  # Wait for a few seconds before trying again
 
             finally:
