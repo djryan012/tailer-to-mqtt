@@ -18,7 +18,6 @@ MQTT_BROKER_PORT = os.getenv("MQTT_BROKER_PORT", "mqtt-broker-port")
 MQTT_TOPIC = os.getenv("MQTT_TOPIC", "logs")
 CONTAINER_NAME_TO_READ = os.getenv("CONTAINER_NAME_TO_READ")
 
-print(f"CONTAINER_NAME_TO_READ: {CONTAINER_NAME_TO_READ}")
 if CONTAINER_NAME_TO_READ is None:
     raise ValueError("CONTAINER_NAME_TO_READ environment variable not set. Please provide the container name.")
 
@@ -42,6 +41,11 @@ def read_container_logs(container_name, mqtt_client):
 
         for log_line in logs:
             decoded_log = log_line.decode('utf-8').strip()
+
+
+            # Add this print statement to check each log line
+            print(f"Log Line: {decoded_log}")
+
 
             if not decoded_log:
                 continue  # Skip empty log lines
