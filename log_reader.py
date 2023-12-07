@@ -35,6 +35,9 @@ def read_container_logs(container_name):
     mqtt_client.username_pw_set(MQTT_USERNAME, password=MQTT_PASSWORD)
 
     try:
+        # Initialize last_processed_log_line outside the loop
+        last_processed_log_line = ""
+
         while True:
             try:
                 container = client.containers.get(container_name)
