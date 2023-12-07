@@ -21,6 +21,7 @@ KEYWORDS = os.getenv("KEYWORDS", "error").split(",")
 MQTT_USERNAME = os.getenv("MQTT_USERNAME", "")
 MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "")
 
+
 def read_container_logs(container_name, mqtt_client):
     client = docker.from_env()
     try:
@@ -38,12 +39,13 @@ def read_container_logs(container_name, mqtt_client):
 
         # Publish accumulated log to MQTT broker
         if accumulated_log.strip():
-            print(accumulated_log)
-            mqtt_client.publish(MQTT_TOPIC, accumulated_log)
+            print(accumulated_log)  # Debugging line
 
             # Check for keywords
             if any(keyword in accumulated_log.lower() for keyword in KEYWORDS):
                 logger.info(f"Found keyword(s) {KEYWORDS} in the log!")
+
+            mqtt_client.publish(MQTT_TOPIC, accumulated_log)
 
     except docker.errors.NotFound:
         logger.warning(f"Container '{container_name}' not found.")
@@ -53,6 +55,8 @@ def read_container_logs(container_name, mqtt_client):
         raise  # Raising the exception so that it's caught outside the function
     finally:
         client.close()
+
+
 
 def on_connect(client, userdata, flags, rc):
     logger.info(f"Connected to MQTT broker with result code {rc}")
