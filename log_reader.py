@@ -2,7 +2,6 @@ import os
 from dotenv import load_dotenv
 import time
 import docker
-from docker.types import LogConfig
 import logging
 
 # Load environmental variables from file
@@ -19,47 +18,49 @@ print(f"CONTAINER_NAME_TO_READ: {CONTAINER_NAME_TO_READ}")
 if CONTAINER_NAME_TO_READ is None:
     raise ValueError("CONTAINER_NAME_TO_READ environment variable not set. Please provide the container name.")
 
-def get_container_id(container_name):
+def read_container_logs(container_name):
     client = docker.from_env()
-    try:
-        project_name = os.getenv("COMPOSE_PROJECT_NAME", "")
-        containers = client.containers.list(filters={"name": f"{project_name}_{container_name}"}, all=True)
-        if containers:
-            return containers[0].id
-        else:
-            return None
-    finally:
-        client.close()
+    max_retries = 5  # Maximum number of retries
+    retries = 0
 
-def read_container_logs(container_id):
-    client = docker.APIClient(base_url='unix://var/run/docker.sock', version='auto', timeout=86400)
     try:
-        logs = client.logs(container=container_id, stream=True, follow=True)
-        for byte_char in logs:
-            char = byte_char.decode('utf-8')
-            if char == '\n':
-                print(f"Last Log Line: {accumulated_log.strip()}")
-                accumulated_log = ""
-            else:
-                accumulated_log += char
+        while retries < max_retries:
+            try:
+                container = client.containers.get(container_name)
+                logs = container.logs(stream=True, follow=True)
+
+                last_log_line = ""  # Store the last encountered log line
+
+                for byte_char in logs:
+                    char = byte_char.decode('utf-8')
+
+                    if char == '\n':
+                        # End of a log line, update last_log_line
+                        last_log_line = accumulated_log.decode('utf-8').strip()
+                        accumulated_log = b""
+                    else:
+                        # Accumulate bytes to form a complete log line
+                        accumulated_log += byte_char
+
+                # Print the last log line
+                if last_log_line:
+                    print(f"Last Log Line: {last_log_line}")
+
+                retries = 0  # Reset retry count on successful log retrieval
+
+            except docker.errors.NotFound:
+                retries += 1
+                logger.warning(f"Container '{container_name}' not found. Retrying... (Retry {retries}/{max_retries})")
+                time.sleep(5)  # Wait for a few seconds before trying again
+
     except Exception as e:
         logger.error(f"An error occurred: {str(e)}")
-        raise  # Raising the exception so that it's caught outside the function
     finally:
         client.close()
 
 if __name__ == "__main__":
     try:
-        while True:
-            container_id = get_container_id(CONTAINER_NAME_TO_READ)
-            if container_id:
-                read_container_logs(container_id)
-            else:
-                logger.warning(f"Container '{CONTAINER_NAME_TO_READ}' not found.")
-                
-            # Pause for a short time before checking logs again
-            time.sleep(5)
-
+        read_container_logs(CONTAINER_NAME_TO_READ)
     except KeyboardInterrupt:
         logger.info("Log reader stopped.")
     except Exception as e:
