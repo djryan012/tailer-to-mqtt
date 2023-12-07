@@ -30,6 +30,7 @@ def read_container_logs(container_name):
                 logs = container.logs(stream=True, follow=True)
 
                 last_log_line = ""  # Store the last encountered log line
+                accumulated_log = b""  # Initialize accumulated_log
 
                 for byte_char in logs:
                     char = byte_char.decode('utf-8')
