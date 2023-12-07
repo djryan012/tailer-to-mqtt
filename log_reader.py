@@ -24,7 +24,7 @@ def read_container_logs(container_name):
     retries = 0
 
     try:
-        while retries < max_retries:
+        while True:
             try:
                 container = client.containers.get(container_name)
                 logs = container.logs(stream=True, follow=True)
@@ -43,26 +43,26 @@ def read_container_logs(container_name):
                         # Accumulate bytes to form a complete log line
                         accumulated_log += byte_char
 
-                # Print the last log line
-                if last_log_line:
-                    print(f"Last Log Line: {last_log_line}")
+                    # Print the last log line
+                    if last_log_line:
+                        print(f"Last Log Line: {last_log_line}")
 
                 retries = 0  # Reset retry count on successful log retrieval
 
-            except docker.errors.NotFound:
+            except Exception as e:
                 retries += 1
-                logger.warning(f"Container '{container_name}' not found. Retrying... (Retry {retries}/{max_retries})")
+                logger.warning(f"An error occurred: {str(e)}. Retrying... (Retry {retries}/{max_retries})")
                 time.sleep(5)  # Wait for a few seconds before trying again
 
+            finally:
+                time.sleep(1)  # Add a small sleep to avoid high CPU usage
+
+    except KeyboardInterrupt:
+        logger.info("Log reader stopped.")
     except Exception as e:
-        logger.error(f"An error occurred: {str(e)}")
+        logger.error(f"An unexpected error occurred: {str(e)}")
     finally:
         client.close()
 
 if __name__ == "__main__":
-    try:
-        read_container_logs(CONTAINER_NAME_TO_READ)
-    except KeyboardInterrupt:
-        logger.info("Log reader stopped.")
-    except Exception as e:
-        logger.error(f"An error occurred: {str(e)}")
+    read_container_logs(CONTAINER_NAME_TO_READ)
