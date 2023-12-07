@@ -44,8 +44,8 @@ def read_container_logs(container_name, mqtt_client):
 
             accumulated_log += decoded_log + "\n"
 
-        # Log accumulated log for debugging
-        logger.debug(f"Accumulated Log:\n{accumulated_log}")
+        # Log accumulated log for debugging (commented out)
+        # logger.debug(f"Accumulated Log:\n{accumulated_log}")
 
         # Publish accumulated log to MQTT broker
         if accumulated_log.strip():
