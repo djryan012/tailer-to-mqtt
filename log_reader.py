@@ -21,14 +21,6 @@ KEYWORDS = os.getenv("KEYWORDS", "error").split(",")
 MQTT_USERNAME = os.getenv("MQTT_USERNAME", "")
 MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "")
 
-# Print variables for debugging
-print(f"MQTT_BROKER_HOST: {MQTT_BROKER_HOST}")
-print(f"MQTT_BROKER_PORT: {MQTT_BROKER_PORT}")
-print(f"MQTT_TOPIC: {MQTT_TOPIC}")
-print(f"CONTAINER_NAME_TO_READ: {CONTAINER_NAME_TO_READ}")
-print(f"KEYWORDS: {KEYWORDS}")
-
-
 def read_container_logs(container_name, mqtt_client):
     client = docker.from_env()
     try:
@@ -44,9 +36,6 @@ def read_container_logs(container_name, mqtt_client):
 
             accumulated_log += decoded_log + "\n"
 
-        # Log accumulated log for debugging (commented out)
-        # logger.debug(f"Accumulated Log:\n{accumulated_log}")
-
         # Publish accumulated log to MQTT broker
         if accumulated_log.strip():
             # Check for keywords
@@ -55,6 +44,13 @@ def read_container_logs(container_name, mqtt_client):
 
             # Log the message before publishing
             logger.info(f"Publishing to MQTT: {accumulated_log}")
+
+            # Print variables for debugging
+            print(f"MQTT_BROKER_HOST: {MQTT_BROKER_HOST}")
+            print(f"MQTT_BROKER_PORT: {MQTT_BROKER_PORT}")
+            print(f"MQTT_TOPIC: {MQTT_TOPIC}")
+            print(f"CONTAINER_NAME_TO_READ: {container_name}")  # Print container name instead of ID
+            print(f"KEYWORDS: {KEYWORDS}")
 
             mqtt_client.publish(MQTT_TOPIC, accumulated_log)
 
@@ -67,8 +63,6 @@ def read_container_logs(container_name, mqtt_client):
     finally:
         client.close()
 
-
-
 def on_connect(client, userdata, flags, rc):
     logger.info(f"Connected to MQTT broker with result code {rc}")
 
@@ -79,8 +73,7 @@ if __name__ == "__main__":
 
     try:
         mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
-        # mqtt_client.loop_start()  # Replace this line
-        mqtt_client.loop_forever()  # with this line
+        mqtt_client.loop_forever()
 
     except KeyboardInterrupt:
         logger.info("Log reader stopped.")
