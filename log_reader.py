@@ -37,13 +37,17 @@ def read_container_logs(container_name, mqtt_client):
 
             accumulated_log += decoded_log + "\n"
 
+        # Log accumulated log for debugging
+        logger.debug(f"Accumulated Log:\n{accumulated_log}")
+
         # Publish accumulated log to MQTT broker
         if accumulated_log.strip():
-            print(accumulated_log)  # Debugging line
-
             # Check for keywords
             if any(keyword in accumulated_log.lower() for keyword in KEYWORDS):
                 logger.info(f"Found keyword(s) {KEYWORDS} in the log!")
+
+            # Log the message before publishing
+            logger.info(f"Publishing to MQTT: {accumulated_log}")
 
             mqtt_client.publish(MQTT_TOPIC, accumulated_log)
 
