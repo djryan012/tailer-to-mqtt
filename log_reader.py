@@ -26,12 +26,11 @@ KEYWORDS = os.getenv("KEYWORDS", "error").split(",")
 MQTT_USERNAME = os.getenv("MQTT_USERNAME", "")
 MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "")
 
-
 # Print variables for debugging
 print(f"MQTT_BROKER_HOST: {MQTT_BROKER_HOST}")
 print(f"MQTT_BROKER_PORT: {MQTT_BROKER_PORT}")
 print(f"MQTT_TOPIC: {MQTT_TOPIC}")
-print(f"CONTAINER_NAME_TO_READ: {container_name}")  # Print container name instead of ID
+print(f"CONTAINER_NAME_TO_READ: {CONTAINER_NAME_TO_READ}")  # Corrected variable name
 print(f"KEYWORDS: {KEYWORDS}")
 
 def read_container_logs(container_name, mqtt_client):
