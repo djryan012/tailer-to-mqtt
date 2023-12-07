@@ -28,6 +28,10 @@ def read_container_logs(container_name, mqtt_client):
         logs = container.logs(stream=True, follow=True)
         for log_line in logs:
             decoded_log = log_line.decode('utf-8').strip()
+            
+            if not decoded_log:
+                continue  # Skip empty log lines
+
             print(decoded_log)
 
             # Publish log to MQTT broker
