@@ -12,35 +12,19 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Retrieve and print environmental variables
+# Retrieve environmental variables
 MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "mqtt-broker-host")
 MQTT_BROKER_PORT = os.getenv("MQTT_BROKER_PORT", "mqtt-broker-port")
 MQTT_TOPIC = os.getenv("MQTT_TOPIC", "logs")
-CONTAINER_ID_TO_READ = os.getenv("CONTAINER_ID_TO_READ", "your_container_id")
+CONTAINER_NAME_TO_READ = os.getenv("CONTAINER_NAME_TO_READ", "tailing-to-mqtt")  # Specify the container name
 KEYWORDS = os.getenv("KEYWORDS", "error").split(",")
 MQTT_USERNAME = os.getenv("MQTT_USERNAME", "")
 MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "")
 
-# Print variables for debugging
-print(f"MQTT_BROKER_HOST: {MQTT_BROKER_HOST}")
-print(f"MQTT_BROKER_PORT: {MQTT_BROKER_PORT}")
-print(f"MQTT_TOPIC: {MQTT_TOPIC}")
-print(f"CONTAINER_ID_TO_READ: {CONTAINER_ID_TO_READ}")
-print(f"KEYWORDS: {KEYWORDS}")
-print(f"MQTT_USERNAME: {MQTT_USERNAME}")
-print(f"MQTT_PASSWORD: {MQTT_PASSWORD}")
-
-# Convert MQTT_BROKER_PORT to an integer
-try:
-    MQTT_BROKER_PORT = int(MQTT_BROKER_PORT)
-except ValueError:
-    logger.error("Invalid value for MQTT_BROKER_PORT. Please provide a valid integer.")
-    exit(1)
-
-def read_container_logs(container_id, mqtt_client):
+def read_container_logs(container_name, mqtt_client):
     client = docker.from_env()
     try:
-        container = client.containers.get(container_id)
+        container = client.containers.get(container_name)
         logs = container.logs(stream=True, follow=True)
         for log_line in logs:
             decoded_log = log_line.decode('utf-8').strip()
@@ -52,9 +36,8 @@ def read_container_logs(container_id, mqtt_client):
             # Check for keywords
             if any(keyword in decoded_log.lower() for keyword in KEYWORDS):
                 logger.info(f"Found keyword(s) {KEYWORDS} in the log!")
-
     except docker.errors.NotFound:
-        logger.warning(f"Container '{container_id}' not found.")
+        logger.warning(f"Container '{container_name}' not found.")
         raise  # Raising the exception so that it's caught outside the function
     except Exception as e:
         logger.error(f"An error occurred: {str(e)}")
@@ -71,12 +54,12 @@ if __name__ == "__main__":
     mqtt_client.on_connect = on_connect
 
     try:
-        mqtt_client.connect(MQTT_BROKER_HOST, MQTT_BROKER_PORT, 60)
+        mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
         mqtt_client.loop_start()
 
         while True:
             try:
-                read_container_logs(CONTAINER_ID_TO_READ, mqtt_client)
+                read_container_logs(CONTAINER_NAME_TO_READ, mqtt_client)
             except KeyboardInterrupt:
                 logger.info("Log reader stopped.")
                 break
