@@ -21,6 +21,13 @@ KEYWORDS = os.getenv("KEYWORDS", "error").split(",")
 MQTT_USERNAME = os.getenv("MQTT_USERNAME", "")
 MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "")
 
+# Print variables for debugging
+print(f"MQTT_BROKER_HOST: {MQTT_BROKER_HOST}")
+print(f"MQTT_BROKER_PORT: {MQTT_BROKER_PORT}")
+print(f"MQTT_TOPIC: {MQTT_TOPIC}")
+print(f"CONTAINER_NAME_TO_READ: {CONTAINER_NAME_TO_READ}")
+print(f"KEYWORDS: {KEYWORDS}")
+
 
 def read_container_logs(container_name, mqtt_client):
     client = docker.from_env()
@@ -72,19 +79,12 @@ if __name__ == "__main__":
 
     try:
         mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
-        mqtt_client.loop_start()
+        # mqtt_client.loop_start()  # Replace this line
+        mqtt_client.loop_forever()  # with this line
 
-        while True:
-            try:
-                read_container_logs(CONTAINER_NAME_TO_READ, mqtt_client)
-            except KeyboardInterrupt:
-                logger.info("Log reader stopped.")
-                break
-            except Exception as e:
-                logger.error(f"An error occurred: {str(e)}")
-
-            # Pause for a short time before checking logs again
-            time.sleep(5)
-
+    except KeyboardInterrupt:
+        logger.info("Log reader stopped.")
+    except Exception as e:
+        logger.error(f"An error occurred: {str(e)}")
     finally:
         mqtt_client.disconnect()
