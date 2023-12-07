@@ -26,20 +26,25 @@ def read_container_logs(container_name, mqtt_client):
     try:
         container = client.containers.get(container_name)
         logs = container.logs(stream=True, follow=True)
+        accumulated_log = ""
+
         for log_line in logs:
             decoded_log = log_line.decode('utf-8').strip()
-            
+
             if not decoded_log:
                 continue  # Skip empty log lines
 
-            print(decoded_log)
+            accumulated_log += decoded_log + "\n"
 
-            # Publish log to MQTT broker
-            mqtt_client.publish(MQTT_TOPIC, decoded_log)
+        # Publish accumulated log to MQTT broker
+        if accumulated_log.strip():
+            print(accumulated_log)
+            mqtt_client.publish(MQTT_TOPIC, accumulated_log)
 
             # Check for keywords
-            if any(keyword in decoded_log.lower() for keyword in KEYWORDS):
+            if any(keyword in accumulated_log.lower() for keyword in KEYWORDS):
                 logger.info(f"Found keyword(s) {KEYWORDS} in the log!")
+
     except docker.errors.NotFound:
         logger.warning(f"Container '{container_name}' not found.")
         raise  # Raising the exception so that it's caught outside the function
