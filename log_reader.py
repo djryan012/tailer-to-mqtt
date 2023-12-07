@@ -16,10 +16,22 @@ logger = logging.getLogger(__name__)
 MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "mqtt-broker-host")
 MQTT_BROKER_PORT = os.getenv("MQTT_BROKER_PORT", "mqtt-broker-port")
 MQTT_TOPIC = os.getenv("MQTT_TOPIC", "logs")
-CONTAINER_NAME_TO_READ = os.getenv("CONTAINER_NAME_TO_READ", "tailing-to-mqtt")  # Specify the container name
+CONTAINER_NAME_TO_READ = os.getenv("CONTAINER_NAME_TO_READ")
+
+if CONTAINER_NAME_TO_READ is None:
+    raise ValueError("CONTAINER_NAME_TO_READ environment variable not set. Please provide the container name.")
+
 KEYWORDS = os.getenv("KEYWORDS", "error").split(",")
 MQTT_USERNAME = os.getenv("MQTT_USERNAME", "")
 MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "")
+
+
+# Print variables for debugging
+print(f"MQTT_BROKER_HOST: {MQTT_BROKER_HOST}")
+print(f"MQTT_BROKER_PORT: {MQTT_BROKER_PORT}")
+print(f"MQTT_TOPIC: {MQTT_TOPIC}")
+print(f"CONTAINER_NAME_TO_READ: {container_name}")  # Print container name instead of ID
+print(f"KEYWORDS: {KEYWORDS}")
 
 def read_container_logs(container_name, mqtt_client):
     client = docker.from_env()
@@ -44,13 +56,6 @@ def read_container_logs(container_name, mqtt_client):
 
             # Log the message before publishing
             logger.info(f"Publishing to MQTT: {accumulated_log}")
-
-            # Print variables for debugging
-            print(f"MQTT_BROKER_HOST: {MQTT_BROKER_HOST}")
-            print(f"MQTT_BROKER_PORT: {MQTT_BROKER_PORT}")
-            print(f"MQTT_TOPIC: {MQTT_TOPIC}")
-            print(f"CONTAINER_NAME_TO_READ: {container_name}")  # Print container name instead of ID
-            print(f"KEYWORDS: {KEYWORDS}")
 
             mqtt_client.publish(MQTT_TOPIC, accumulated_log)
 

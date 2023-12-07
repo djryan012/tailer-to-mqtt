@@ -12,9 +12,9 @@ services:
       - MQTT_BROKER_PORT=host_port
       - MQTT_USERNAME=name
       - MQTT_PASSWORD=password
-      - MQTT_TOPIC=Topic
-      - CONTAINER_ID_TO_READ=number
-      - KEYWORDS=2112,2140,keywords,error,warning
+      - MQTT_TOPIC=topic
+      - CONTAINER_NAME_TO_READ=container_name
+      - KEYWORDS=Starting Server,Version,Server started,Stopping server
     stdin_open: true
     tty: true
     volumes:
