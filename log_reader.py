@@ -24,14 +24,18 @@ def read_container_logs(container_name):
         container = client.containers.get(container_name)
         logs = container.logs(stream=True, follow=True)
 
-        for log_line in logs:
-            decoded_log = log_line.decode('utf-8').strip()
+        accumulated_log = b""  # Accumulate bytes to form a complete log line
 
-            # Add this print statement to check each log line
-            print(f"Log Line: {decoded_log}")
+        for byte_char in logs:
+            char = byte_char.decode('utf-8')
 
-            if not decoded_log:
-                continue  # Skip empty log lines
+            if char == '\n':
+                # End of a log line, print and reset accumulated_log
+                print(f"Log Line: {accumulated_log.decode('utf-8').strip()}")
+                accumulated_log = b""
+            else:
+                # Accumulate bytes to form a complete log line
+                accumulated_log += byte_char
 
     except docker.errors.NotFound:
         logger.warning(f"Container '{container_name}' not found.")
