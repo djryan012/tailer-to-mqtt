@@ -40,6 +40,9 @@ def read_container_logs(container_name):
                 container = client.containers.get(container_name)
                 logs = container.logs(stream=True, follow=True)
 
+                # Initialize accumulated_log outside the loop
+                accumulated_log = b""
+
                 for byte_char in logs:
                     char = byte_char.decode('utf-8')
 
