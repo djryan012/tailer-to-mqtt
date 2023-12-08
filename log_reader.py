@@ -58,7 +58,14 @@ def read_container_logs(container_name):
 
                     if char == '\n':
                         # End of a log line, check if it's a new log line
-                        current_log_line = accumulated_log.decode('utf-8').strip()
+                        # Extract the human-readable timestamp from the log line
+                        timestamp_start = accumulated_log.find(b'[')
+                        timestamp_end = accumulated_log.find(b']', timestamp_start)
+                        human_readable_timestamp = accumulated_log[timestamp_start + 1:timestamp_end].decode('utf-8')
+
+                        # Use the human-readable timestamp as the log line
+                        current_log_line = f"{human_readable_timestamp} {accumulated_log[timestamp_end + 1:].decode('utf-8').strip()}"
+
                         accumulated_log = b""
 
                         if current_log_line != last_processed_log_line:
