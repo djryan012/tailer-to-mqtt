@@ -66,27 +66,25 @@ def read_container_logs(container_name):
 
                         # Use the human-readable timestamp as the log line
                         current_log_line = f"{human_readable_timestamp} {accumulated_log[timestamp_end + 1:].decode('utf-8').strip()}"
-
                         accumulated_log = b""
 
-                        if current_log_line != last_processed_log_line:
-                            # Print the raw log line
-                            print(f"Decoded Log Line: {current_log_line}")
+                        # Print all log lines (including non-matching ones)
+                        print(f"Decoded Log Line: {current_log_line}")
 
-                            # Check for keywords using regular expressions
-                            for keyword in KEYWORDS:
-                                if re.search(rf'\b{re.escape(keyword)}\b', current_log_line, re.IGNORECASE):
-                                    print(f"Keyword Match: True for '{keyword}'")
-                                    # Uncomment the following lines to publish to MQTT
-                                    # mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
-                                    # mqtt_client.publish(MQTT_TOPIC, current_log_line)
-                                    # mqtt_client.disconnect()
+                        # Check for keywords using regular expressions
+                        for keyword in KEYWORDS:
+                            if re.search(rf'\b{re.escape(keyword)}\b', current_log_line, re.IGNORECASE):
+                                print(f"Keyword Match: True for '{keyword}'")
+                                # Uncomment the following lines to publish to MQTT
+                                # mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
+                                # mqtt_client.publish(MQTT_TOPIC, current_log_line)
+                                # mqtt_client.disconnect()
 
-                                    # Update the last processed log line
-                                    last_processed_log_line = current_log_line
-                                    break
-                                else:
-                                    print(f"Keyword Match: False for '{keyword}'")
+                                # Update the last processed log line
+                                last_processed_log_line = current_log_line
+                                break
+                            else:
+                                print(f"Keyword Match: False for '{keyword}'")
 
                     else:
                         # Accumulate bytes to form a complete log line
