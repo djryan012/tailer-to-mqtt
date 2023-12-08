@@ -5,7 +5,6 @@ import docker
 import logging
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
-import re
 
 # Load environmental variables from file
 load_dotenv()
@@ -66,31 +65,19 @@ def read_container_logs(container_name):
 
                         # Use the human-readable timestamp as the log line
                         current_log_line = f"{human_readable_timestamp} {accumulated_log[timestamp_end + 1:].decode('utf-8').strip()}"
+
                         accumulated_log = b""
 
-                        # Check for keywords using regular expressions
-                        keyword_matched = False
-                        for keyword in KEYWORDS:
-                            if re.search(rf'\b{re.escape(keyword)}\b', current_log_line, re.IGNORECASE):
-                                keyword_matched = True
-                                break
+                        if current_log_line != last_processed_log_line:
+                            # Check for keywords
+                            if any(keyword in current_log_line.lower() for keyword in KEYWORDS):
+                                # Uncomment the following lines to publish to MQTT
+                                # mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
+                                # mqtt_client.publish(MQTT_TOPIC, current_log_line)
+                                # mqtt_client.disconnect()
 
-                        # Print the decoded log line
-                        print(f"Decoded Log Line: {current_log_line}")
-
-                        # Print the keyword match status
-                        for keyword in KEYWORDS:
-                            print(f"Keyword Match: {keyword_matched} for '{keyword}'")
-
-                        # If any keyword is matched, proceed with additional actions
-                        if keyword_matched:
-                            # Uncomment the following lines to publish to MQTT
-                            # mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
-                            # mqtt_client.publish(MQTT_TOPIC, current_log_line)
-                            # mqtt_client.disconnect()
-
-                            # Update the last processed log line
-                            last_processed_log_line = current_log_line
+                                # Update the last processed log line
+                                last_processed_log_line = current_log_line
 
                     else:
                         # Accumulate bytes to form a complete log line
