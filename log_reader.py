@@ -5,6 +5,7 @@ import docker
 import logging
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta
+import re
 
 # Load environmental variables from file
 load_dotenv()
@@ -72,9 +73,9 @@ def read_container_logs(container_name):
                             # Print the raw log line
                             print(f"Decoded Log Line: {current_log_line}")
 
-                            # Check for keywords
+                            # Check for keywords using regular expressions
                             for keyword in KEYWORDS:
-                                if keyword.lower() in current_log_line.lower():
+                                if re.search(rf'\b{re.escape(keyword)}\b', current_log_line, re.IGNORECASE):
                                     print(f"Keyword Match: True for '{keyword}'")
                                     # Uncomment the following lines to publish to MQTT
                                     # mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
@@ -86,7 +87,6 @@ def read_container_logs(container_name):
                                     break
                                 else:
                                     print(f"Keyword Match: False for '{keyword}'")
-
 
                     else:
                         # Accumulate bytes to form a complete log line
