@@ -94,7 +94,7 @@ def read_container_logs(container_name):
 
                     else:
                         # Accumulate bytes to form a complete log line
-                        accumulated_log += byte_charete log line
+                        accumulated_log += byte_char
 
             except Exception as e:
                 logger.warning(f"An error occurred: {str(e)}. Retrying...")
