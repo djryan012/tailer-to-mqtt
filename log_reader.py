@@ -78,20 +78,19 @@ def read_container_logs(container_name):
 
                             import re
 
+                            # ...
+
                             for keyword in KEYWORDS:
                                 print(f"Keyword: {keyword}")
                                 print(f"Current Log Line (lowercased): {current_log_line}")
 
-                                # Split the log line into individual words
-                                words_in_line = re.findall(r'\b\w+\b', current_log_line.lower())
+                                # Check if the keyword is present anywhere in the log line
+                                keyword_match = re.search(r'\b{}\b'.format(re.escape(keyword.lower())), current_log_line.lower())
 
-                                # Check each word for a keyword match
-                                keyword_match = any(word == keyword.lower() for word in words_in_line)
-                                
                                 if keyword_match:
                                     print(f"Keyword Match: True for '{current_log_line}'")
                                     # Uncomment the following lines to publish to MQTT
-                                    # mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
+                                    # mqtt_client.connect(MQTT_BROKER_HOST, int(MQT_BROKER_PORT), 60)
                                     # mqtt_client.publish(MQTT_TOPIC, current_log_line)
                                     # mqtt_client.disconnect()
 
@@ -100,7 +99,6 @@ def read_container_logs(container_name):
                                     break
                                 else:
                                     print(f"Keyword Match: False for '{current_log_line}'")
-
 
                     else:
                         # Accumulate bytes to form a complete log line
