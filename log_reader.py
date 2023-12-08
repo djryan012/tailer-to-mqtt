@@ -21,7 +21,7 @@ if CONTAINER_NAME_TO_READ is None:
 
 # MQTT configuration
 MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "mqtt-broker-host")
-MQTT_BROKER_PORT = os.getenv("MQTT_BROKER_PORT", "mqtt-broker-port")
+MQTT_BROKER_PORT = int(os.getenv("MQTT_BROKER_PORT", 1883))
 MQTT_TOPIC = os.getenv("MQTT_TOPIC", "logs")
 MQTT_USERNAME = os.getenv("MQTT_USERNAME", "")
 MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "")
@@ -64,7 +64,7 @@ def read_container_logs(container_name):
                                 print(f"Last Log Line: {current_log_line}")
 
                                 # Uncomment the following lines to publish to MQTT
-                                # mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
+                                # mqtt_client.connect(MQTT_BROKER_HOST, MQTT_BROKER_PORT, 60)
                                 # mqtt_client.publish(MQTT_TOPIC, current_log_line)
                                 # mqtt_client.disconnect()
 
@@ -85,4 +85,7 @@ def read_container_logs(container_name):
     except KeyboardInterrupt:
         logger.info("Log reader stopped.")
     except Exception as e:
-        lo
+        logger.error(f"An error occurred: {str(e)}")
+
+if __name__ == "__main__":
+    read_container_logs(CONTAINER_NAME_TO_READ)
