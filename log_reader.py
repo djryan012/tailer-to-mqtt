@@ -9,7 +9,7 @@ import paho.mqtt.client as mqtt
 load_dotenv()
 
 # Set up logging
-logging.basicConfig(level=logging.DEBUG)  # Set logging level to DEBUG for detailed information
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Retrieve environmental variables
@@ -31,6 +31,8 @@ last_processed_log_line = ""
 
 # Keywords to check for
 KEYWORDS = os.getenv("KEYWORDS", "error").split(",")
+
+print(f"KEYWORDS: {KEYWORDS}")
 
 def read_container_logs(container_name):
     client = docker.from_env()
@@ -57,9 +59,14 @@ def read_container_logs(container_name):
                         current_log_line = accumulated_log.decode('utf-8').strip()
                         accumulated_log = b""
 
+                        print(f"Decoded Log Line: {current_log_line}")
+
                         if current_log_line != last_processed_log_line:
                             # Check for keywords
-                            if any(keyword in current_log_line.lower() for keyword in KEYWORDS):
+                            keyword_match = any(keyword in current_log_line.lower() for keyword in KEYWORDS)
+                            print(f"Keyword Match: {keyword_match}")
+
+                            if keyword_match:
                                 # Print the new log line
                                 print(f"Last Log Line: {current_log_line}")
 
@@ -77,11 +84,9 @@ def read_container_logs(container_name):
 
             except Exception as e:
                 logger.warning(f"An error occurred: {str(e)}. Retrying...")
-                print("Before retrying. Sleeping for 5 seconds...")
                 time.sleep(5)  # Wait for a few seconds before trying again
 
             finally:
-                print("Before small sleep...")
                 time.sleep(1)  # Add a small sleep to avoid high CPU usage
 
     except KeyboardInterrupt:
