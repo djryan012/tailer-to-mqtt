@@ -68,27 +68,33 @@ def read_container_logs(container_name):
                         current_log_line = f"{human_readable_timestamp} {accumulated_log[timestamp_end + 1:].decode('utf-8').strip()}"
                         accumulated_log = b""
 
-                        # Print all log lines (including non-matching ones)
-                        print(f"Decoded Log Line: {current_log_line}")
-
                         # Check for keywords using regular expressions
+                        keyword_matched = False
                         for keyword in KEYWORDS:
                             if re.search(rf'\b{re.escape(keyword)}\b', current_log_line, re.IGNORECASE):
-                                print(f"Keyword Match: True for '{keyword}'")
-                                # Uncomment the following lines to publish to MQTT
-                                # mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
-                                # mqtt_client.publish(MQTT_TOPIC, current_log_line)
-                                # mqtt_client.disconnect()
-
-                                # Update the last processed log line
-                                last_processed_log_line = current_log_line
+                                keyword_matched = True
                                 break
-                            else:
-                                print(f"Keyword Match: False for '{keyword}'")
+
+                        # Print the decoded log line
+                        print(f"Decoded Log Line: {current_log_line}")
+
+                        # Print the keyword match status
+                        for keyword in KEYWORDS:
+                            print(f"Keyword Match: {keyword_matched} for '{keyword}'")
+
+                        # If any keyword is matched, proceed with additional actions
+                        if keyword_matched:
+                            # Uncomment the following lines to publish to MQTT
+                            # mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
+                            # mqtt_client.publish(MQTT_TOPIC, current_log_line)
+                            # mqtt_client.disconnect()
+
+                            # Update the last processed log line
+                            last_processed_log_line = current_log_line
 
                     else:
                         # Accumulate bytes to form a complete log line
-                        accumulated_log += byte_char
+                        accumulated_log += byte_charete log line
 
             except Exception as e:
                 logger.warning(f"An error occurred: {str(e)}. Retrying...")
