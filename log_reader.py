@@ -76,13 +76,16 @@ def read_container_logs(container_name):
                             # Check for keywords
                             lowercased_line = current_log_line.lower()
 
+
+                            import re
+
                             for keyword in KEYWORDS:
                                 print(f"Keyword: {keyword}")
                                 print(f"Current Log Line (lowercased): {lowercased_line}")
 
-                                # Modify the keyword to match both timestamp formats
-                                keyword_lower = keyword.lower()
-                                if keyword_lower in lowercased_line:
+                                # Use regular expression to find the keyword in the log line
+                                keyword_pattern = re.compile(re.escape(keyword), re.IGNORECASE)
+                                if keyword_pattern.search(lowercased_line):
                                     print(f"Keyword Match: True for '{current_log_line}'")
                                     # Uncomment the following lines to publish to MQTT
                                     # mqtt_client.connect(MQTT_BROKER_HOST, int(MQT
