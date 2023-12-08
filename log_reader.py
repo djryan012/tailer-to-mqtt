@@ -9,7 +9,7 @@ import paho.mqtt.client as mqtt
 load_dotenv()
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)  # Set logging level to DEBUG for detailed information
 logger = logging.getLogger(__name__)
 
 # Retrieve environmental variables
@@ -21,7 +21,7 @@ if CONTAINER_NAME_TO_READ is None:
 
 # MQTT configuration
 MQTT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "mqtt-broker-host")
-MQTT_BROKER_PORT = int(os.getenv("MQTT_BROKER_PORT", 1883))
+MQTT_BROKER_PORT = os.getenv("MQTT_BROKER_PORT", "mqtt-broker-port")
 MQTT_TOPIC = os.getenv("MQTT_TOPIC", "logs")
 MQTT_USERNAME = os.getenv("MQTT_USERNAME", "")
 MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "")
@@ -64,7 +64,7 @@ def read_container_logs(container_name):
                                 print(f"Last Log Line: {current_log_line}")
 
                                 # Uncomment the following lines to publish to MQTT
-                                # mqtt_client.connect(MQTT_BROKER_HOST, MQTT_BROKER_PORT, 60)
+                                # mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
                                 # mqtt_client.publish(MQTT_TOPIC, current_log_line)
                                 # mqtt_client.disconnect()
 
@@ -77,9 +77,11 @@ def read_container_logs(container_name):
 
             except Exception as e:
                 logger.warning(f"An error occurred: {str(e)}. Retrying...")
+                print("Before retrying. Sleeping for 5 seconds...")
                 time.sleep(5)  # Wait for a few seconds before trying again
 
             finally:
+                print("Before small sleep...")
                 time.sleep(1)  # Add a small sleep to avoid high CPU usage
 
     except KeyboardInterrupt:
