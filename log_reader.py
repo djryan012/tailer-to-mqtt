@@ -74,13 +74,15 @@ def read_container_logs(container_name):
                             print(f"Decoded Log Line: {current_log_line}")
 
                             # Check for keywords
-                            lowercased_line = current_log_line.lower()  # Convert to lowercase for case-insensitive matching
+                            lowercased_line = current_log_line.lower()
+
                             for keyword in KEYWORDS:
                                 print(f"Keyword: {keyword}")
                                 print(f"Current Log Line (lowercased): {lowercased_line}")
-                                
-                                # Modify the keyword to match either timestamp format
-                                if keyword in lowercased_line or keyword.replace(' ', 'T') in lowercased_line:
+
+                                # Modify the keyword to match both timestamp formats
+                                keyword_lower = keyword.lower()
+                                if keyword_lower in lowercased_line:
                                     print(f"Keyword Match: True for '{current_log_line}'")
                                     # Uncomment the following lines to publish to MQTT
                                     # mqtt_client.connect(MQTT_BROKER_HOST, int(MQT
