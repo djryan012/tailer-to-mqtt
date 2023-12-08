@@ -72,17 +72,22 @@ def read_container_logs(container_name):
                             print(f"Decoded Log Line: {current_log_line}")
 
                             # Check for keywords
-                            if any(keyword in current_log_line.lower() for keyword in KEYWORDS):
-                                print(f"Keyword Match: True for '{current_log_line}'")
-                                # Uncomment the following lines to publish to MQTT
-                                # mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
-                                # mqtt_client.publish(MQTT_TOPIC, current_log_line)
-                                # mqtt_client.disconnect()
+                            lowercased_line = current_log_line.lower()  # Convert to lowercase for case-insensitive matching
+                            for keyword in KEYWORDS:
+                                print(f"Keyword: {keyword}")
+                                print(f"Current Log Line (lowercased): {lowercased_line}")
+                                if keyword in lowercased_line:
+                                    print(f"Keyword Match: True for '{current_log_line}'")
+                                    # Uncomment the following lines to publish to MQTT
+                                    # mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
+                                    # mqtt_client.publish(MQTT_TOPIC, current_log_line)
+                                    # mqtt_client.disconnect()
 
-                                # Update the last processed log line
-                                last_processed_log_line = current_log_line
-                            else:
-                                print(f"Keyword Match: False for '{current_log_line}'")
+                                    # Update the last processed log line
+                                    last_processed_log_line = current_log_line
+                                    break
+                                else:
+                                    print(f"Keyword Match: False for '{current_log_line}'")
 
                     else:
                         # Accumulate bytes to form a complete log line
