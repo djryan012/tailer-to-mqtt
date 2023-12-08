@@ -84,7 +84,7 @@ def read_container_logs(container_name):
                                 print(f"Current Log Line (lowercased): {lowercased_line}")
 
                                 # Use regular expression to find the keyword in the log line
-                                keyword_pattern = re.compile(re.escape(keyword), re.IGNORECASE)
+                                keyword_pattern = re.compile(r'\b' + re.escape(keyword) + r'\b', re.IGNORECASE)
                                 if keyword_pattern.search(lowercased_line):
                                     print(f"Keyword Match: True for '{current_log_line}'")
                                     # Uncomment the following lines to publish to MQTT
