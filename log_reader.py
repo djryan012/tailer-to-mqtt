@@ -68,6 +68,8 @@ def read_container_logs(container_name):
 
                         accumulated_log = b""
 
+                        # ... (previous code)
+
                         if current_log_line != last_processed_log_line:
                             print(f"Decoded Log Line: {current_log_line}")
 
@@ -76,10 +78,13 @@ def read_container_logs(container_name):
                             for keyword in KEYWORDS:
                                 print(f"Keyword: {keyword}")
                                 print(f"Current Log Line (lowercased): {lowercased_line}")
-                                if keyword in lowercased_line:
+                                
+                                # Modify the keyword to match either timestamp format
+                                if keyword in lowercased_line or keyword.replace(' ', 'T') in lowercased_line:
                                     print(f"Keyword Match: True for '{current_log_line}'")
                                     # Uncomment the following lines to publish to MQTT
-                                    # mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
+                                    # mqtt_client.connect(MQTT_BROKER_HOST, int(MQT
+                                    # T_BROKER_PORT), 60)
                                     # mqtt_client.publish(MQTT_TOPIC, current_log_line)
                                     # mqtt_client.disconnect()
 
@@ -88,6 +93,8 @@ def read_container_logs(container_name):
                                     break
                                 else:
                                     print(f"Keyword Match: False for '{current_log_line}'")
+
+                        # ... (rest of the code)
 
                     else:
                         # Accumulate bytes to form a complete log line
