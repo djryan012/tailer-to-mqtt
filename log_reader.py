@@ -62,14 +62,13 @@ def read_container_logs(container_name):
                         accumulated_log = b""
 
                         if current_log_line != last_processed_log_line:
+                            # Print the raw log line
+                            print(f"Decoded Log Line: {current_log_line}")
+
                             # Check for keywords
                             if any(keyword in current_log_line.lower() for keyword in KEYWORDS):
-                                # Print the new log line
-                                print(f"Last Log Line: {current_log_line}")
-
                                 # Uncomment the following lines to publish to MQTT
-                                # mqtt_client.connect(MQTT_BROKER_HOST, int(MQT
-                                # T_BROKER_PORT), 60)
+                                # mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
                                 # mqtt_client.publish(MQTT_TOPIC, current_log_line)
                                 # mqtt_client.disconnect()
 
