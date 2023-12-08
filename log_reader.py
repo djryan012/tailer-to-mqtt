@@ -73,14 +73,20 @@ def read_container_logs(container_name):
                             print(f"Decoded Log Line: {current_log_line}")
 
                             # Check for keywords
-                            if any(keyword in current_log_line.lower() for keyword in KEYWORDS):
-                                # Uncomment the following lines to publish to MQTT
-                                # mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
-                                # mqtt_client.publish(MQTT_TOPIC, current_log_line)
-                                # mqtt_client.disconnect()
+                            for keyword in KEYWORDS:
+                                if keyword.lower() in current_log_line.lower():
+                                    print(f"Keyword Match: True for '{keyword}'")
+                                    # Uncomment the following lines to publish to MQTT
+                                    # mqtt_client.connect(MQTT_BROKER_HOST, int(MQTT_BROKER_PORT), 60)
+                                    # mqtt_client.publish(MQTT_TOPIC, current_log_line)
+                                    # mqtt_client.disconnect()
 
-                                # Update the last processed log line
-                                last_processed_log_line = current_log_line
+                                    # Update the last processed log line
+                                    last_processed_log_line = current_log_line
+                                    break
+                                else:
+                                    print(f"Keyword Match: False for '{keyword}'")
+
 
                     else:
                         # Accumulate bytes to form a complete log line
