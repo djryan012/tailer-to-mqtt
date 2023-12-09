@@ -3,11 +3,8 @@ import os
 from datetime import datetime
 
 def convert_to_datetime(log_timestamp):
-    # Remove '[' if present at the beginning of the timestamp
-    log_timestamp = log_timestamp.lstrip('[')
-
     try:
-        return datetime.strptime(log_timestamp[:30], "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
+        return datetime.strptime(log_timestamp[:30], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
     except ValueError:
         raise ValueError(f"Could not parse timestamp: {log_timestamp}")
 
