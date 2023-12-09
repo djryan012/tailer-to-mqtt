@@ -4,6 +4,7 @@ from datetime import datetime
 
 def convert_to_datetime(log_timestamp):
     try:
+        # Try parsing the timestamp in the first format
         return datetime.strptime(log_timestamp[:30], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
     except ValueError:
         raise ValueError(f"Could not parse timestamp: {log_timestamp}")
