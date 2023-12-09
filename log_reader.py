@@ -2,24 +2,25 @@ import subprocess
 import os
 
 def monitor_logs(container_name, keywords):
-    last_log_line = ""
+    last_log_timestamp = ""
 
     while True:
-        # Get all log lines from the specified container
-        command = f"docker logs {container_name}"
+        # Get logs since the last timestamp
+        command = f"docker logs --since='{last_log_timestamp}' {container_name}"
         try:
             output = subprocess.check_output(command, shell=True, text=True).strip()
 
             # Split the output into individual lines
             log_lines = output.splitlines()
 
+            # Update the last log timestamp
+            if log_lines:
+                last_log_timestamp = log_lines[-1].split(' ', 1)[0]
+
             # Iterate through each line
             for log_line in log_lines:
-                # Check if the log line is not blank and has changed
-                if log_line.strip() and log_line != last_log_line:
-                    # Save the last log line
-                    last_log_line = log_line
-
+                # Check if the log line is not blank
+                if log_line.strip():
                     # Check if any keyword is present in the log line
                     if any(keyword in log_line for keyword in keywords):
                         # If a match is found, print the line to the console
