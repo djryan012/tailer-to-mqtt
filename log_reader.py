@@ -2,23 +2,28 @@ import subprocess
 import os
 
 def monitor_logs(container_name, keywords):
-    while True:
-        # Get the last line of logs from the container
-        command = f"docker logs --tail 1 {container_name}"
-        try:
-            output = subprocess.check_output(command, shell=True, text=True).strip()
+    # Use the --follow option to continuously tail the logs
+    command = f"docker logs --follow {container_name}"
+    
+    # Use subprocess.Popen to get continuous output from the command
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, text=True)
 
-            # Check if the last line is not blank
-            if output:
-                # Check if any keyword is present in the last log line
-                if any(keyword in output for keyword in keywords):
-                    # If a match is found, print the line to the console
-                    print(output)
+    try:
+        # Read the output line by line
+        for line in process.stdout:
+            # Check if any keyword is present in the log line
+            if any(keyword in line for keyword in keywords):
+                # Replace "INFO]" with "TRUE]" if a keyword is found
+                line = line.replace("INFO]", "TRUE]")
+                # Print the modified line to the console
+                print(line, end='', flush=True)
 
-        except subprocess.CalledProcessError as e:
-            print(f"Error while running 'docker logs': {e}")
-
-        # No sleep, check logs continuously
+    except KeyboardInterrupt:
+        # Handle KeyboardInterrupt to gracefully stop the script
+        pass
+    finally:
+        # Close the subprocess when done
+        process.kill()
 
 if __name__ == "__main__":
     container_name = os.environ.get("MONITORED_CONTAINER", "bedrock_creative")
