@@ -1,5 +1,9 @@
 import subprocess
 import os
+from datetime import datetime
+
+def convert_to_datetime(log_timestamp):
+    return datetime.strptime(log_timestamp[1:-2], "%Y-%m-%d %H:%M:%S:%f").strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
 
 def monitor_logs(container_name, keywords):
     last_log_timestamp = ""
@@ -15,7 +19,7 @@ def monitor_logs(container_name, keywords):
 
             # Update the last log timestamp
             if log_lines:
-                last_log_timestamp = log_lines[-1].split(' ', 1)[0]
+                last_log_timestamp = convert_to_datetime(log_lines[-1].split(' ', 1)[0])
 
             # Iterate through each line
             for log_line in log_lines:
