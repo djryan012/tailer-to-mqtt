@@ -1,32 +1,36 @@
 import subprocess
-import os
 
-def monitor_logs(container_name, keywords):
-    # Use the --follow option to continuously tail the logs
-    command = f"docker logs --follow {container_name}"
-    
-    # Use subprocess.Popen to get continuous output from the command
-    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, text=True)
+keywords = ["Starting Server", "Version"]
+
+def tail_logs(container_name, keywords):
+    command = f"docker logs --tail 0 -f {container_name}"
+
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
+
+    last_lines = {keyword: None for keyword in keywords}
 
     try:
-        # Read the output line by line
-        for line in process.stdout:
-            # Check if any keyword is present in the log line
-            if any(keyword in line for keyword in keywords):
-                # Replace "INFO]" with "TRUE]" if a keyword is found
-                line = line.replace("INFO]", "TRUE]")
-                # Print the modified line to the console
-                print(line, end='', flush=True)
+        for line in iter(process.stdout.readline, ''):
+            line = line.strip()
+            print(line)
+
+            for keyword in keywords:
+                if keyword in line:
+                    last_lines[keyword] = line.replace("INFO]", "TRUE]")
+
+            # Check if all keywords have a non-empty last line
+            if all(last_lines.values()):
+                break
 
     except KeyboardInterrupt:
-        # Handle KeyboardInterrupt to gracefully stop the script
-        pass
+        print("Script terminated by user.")
     finally:
-        # Close the subprocess when done
-        process.kill()
+        process.terminate()
+
+    for keyword, last_line in last_lines.items():
+        if last_line:
+            print(f"Last line for keyword '{keyword}': {last_line}")
 
 if __name__ == "__main__":
-    container_name = os.environ.get("MONITORED_CONTAINER", "bedrock_creative")
-    keywords = os.environ.get("KEYWORDS", "").split(", ")
-
-    monitor_logs(container_name, keywords)
+    container_name = "bedrock_creative"
+    tail_logs(container_name, keywords)
