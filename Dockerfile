@@ -1,14 +1,7 @@
-# Use an official Python runtime as a parent image
-FROM python:3.8-slim
+FROM docker:latest
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy the current directory contents into the container
-COPY . /app
+COPY log_reader.py .
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Run log_reader.py when the container launches
-CMD ["python", "./log_reader.py"]
+CMD ["python", "log_reader.py"]
