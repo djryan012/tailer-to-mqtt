@@ -1,19 +1,16 @@
-import subprocess
+import docker
 
 def tail_logs(container_name):
-    command = f"docker logs --tail 0 -f {container_name}"
-
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
+    client = docker.from_env()
+    container = client.containers.get(container_name)
 
     try:
-        for line in iter(process.stdout.readline, ''):
-            line = line.strip()
+        for line in container.logs(stream=True, follow=True, tail="all"):
+            line = line.decode("utf-8").strip()
             print(line)
 
     except KeyboardInterrupt:
         print("Script terminated by user.")
-    finally:
-        process.terminate()
 
 if __name__ == "__main__":
     container_name = "bedrock_creative"
