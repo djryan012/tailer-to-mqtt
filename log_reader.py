@@ -3,7 +3,13 @@ import os
 from datetime import datetime
 
 def convert_to_datetime(log_timestamp):
-    return datetime.strptime(log_timestamp[:-1], "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
+    # Remove '[' if present at the beginning of the timestamp
+    log_timestamp = log_timestamp.lstrip('[')
+
+    try:
+        return datetime.strptime(log_timestamp[:30], "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
+    except ValueError:
+        raise ValueError(f"Could not parse timestamp: {log_timestamp}")
 
 def monitor_logs(container_name, keywords):
     last_log_timestamp = ""
