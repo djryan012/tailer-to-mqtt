@@ -2,10 +2,10 @@ FROM alpine
 
 WORKDIR /app
 
-COPY monitor_logs.sh .
+COPY monitor_logs.sh /app/
 
-RUN chmod +x monitor_logs.sh
+RUN chmod +x /app/monitor_logs.sh
 
 RUN apk add --no-cache mosquitto-clients
 
-CMD ["/bin/sh", "-c", "./monitor_logs.sh"]
+CMD ["/bin/sh", "-c", "/app/monitor_logs.sh"]
