@@ -1,22 +1,13 @@
 version: '3'
 services:
   log-tailer:
-    image: ghcr.io/djryan012/tailer-to-mqtt:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: log_tailer_container
-    volumes:
-      - ./config.yml:/app/config.yml
-      - /var/run/docker.sock:/var/run/docker.sock
+    image: ghcr.io/djryan012/tailer-to-mqtt:bash
+    container_name: tailer-to-mqtt
 
-  mqtt-publisher:
-    image: eclipse-mosquitto
-    depends_on:
-      - log-tailer
     environment:
-      - MQTT_BROKER_HOST=${MQTT_BROKER}
-      - MQTT_USERNAME=${MQTT_USERNAME}
-      - MQTT_PASSWORD=${MQTT_PASSWORD}
-    volumes:
-      - ./config.yml:/app/config.yml
+      - MQTT_HOST=mqtt.eclipse.org
+      - MQTT_PORT=1883
+      - MQTT_USERNAME=
+      - MQTT_PASSWORD=
+      - LOG_KEYWORD=Starting Server
+      - TARGET_CONTAINER_NAME=bedrock_creative
