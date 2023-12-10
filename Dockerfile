@@ -8,4 +8,4 @@ RUN chmod +x /app/monitor_logs.sh
 
 RUN apk add --no-cache mosquitto-clients
 
-CMD ["/bin/sh", "-c", "/app/monitor_logs.sh"]
+CMD ["/bin/ash", "-c", "/app/monitor_logs.sh"]
