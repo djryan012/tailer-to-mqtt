@@ -1,8 +1,8 @@
-name: Docker Image CI
+name: Docker Image - Bash
 
 on:
   push:
-    branches: [ "python" ]
+    branches: [ "bash" ]
 
 jobs:
   build:
@@ -25,4 +25,4 @@ jobs:
         file: ./Dockerfile
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: ghcr.io/djryan012/tailer-to-mqtt:latest
+        tags: ghcr.io/djryan012/tailer-to-mqtt:bash
